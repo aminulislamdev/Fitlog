@@ -2,7 +2,7 @@
 
 A dark, no-nonsense gym companion built with Next.js. Pick a lift, lock it into today's plan, and watch the week's work add up.
 
-![FitLog Banner](/fitlog/src/assets/banner.png)
+![FitLog Banner]([/fitlog/src/assets/banner.png](https://github.com/aminulislamdev/Fitlog/blob/main/src/assets/banner.png?raw=true))
 
 ---
 
@@ -118,6 +118,6 @@ MIT — feel free to use, modify, and share.
 
 ## 👨‍💻 Author
 
-Built with 💪 by **[Your Name]**
+Built with 💪 by **Aminul Islam Mahi**
 
 **Train hard, log honest.**
