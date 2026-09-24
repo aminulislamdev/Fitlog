@@ -1,20 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import { usePlan } from "@/context/PlanContext";
-import type { PlanTab } from "@/types/plan";
+import type { PlanTab, SortOption } from "@/types/plan";
 import PlanStats from "@/components/plan/PlanStats";
 import PlanTabs from "@/components/plan/PlanTabs";
 import PlanCard from "@/components/plan/PlanCard";
 import EmptyState from "@/components/plan/EmptyState";
+import SortDropdown from "@/components/shared/SortDropdown";
 
 export default function MyPlanPage() {
   const [activeTab, setActiveTab] = useState<PlanTab>("today");
+  const [sortBy, setSortBy] = useState<SortOption>("duration");
+
   const { todayPlan, saved } = usePlan();
 
   const currentList = activeTab === "today" ? todayPlan : saved;
+
+  const sortedList = useMemo(() => {
+    const list = [...currentList];
+    switch (sortBy) {
+      case "duration":
+        return list.sort((a, b) => a.duration - b.duration);
+      case "calories":
+        return list.sort((a, b) => a.caloriesBurned - b.caloriesBurned);
+      case "rating":
+        return list.sort((a, b) => b.rating - a.rating);
+      default:
+        return list;
+    }
+  }, [currentList, sortBy]);
 
   return (
     <div className="container mx-auto px-4 py-6 lg:py-10">
@@ -42,22 +59,23 @@ export default function MyPlanPage() {
         <PlanStats />
       </div>
 
-      {/* Tabs */}
-      <div className="mb-5">
+      {/* Tabs + Sort */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <PlanTabs
           activeTab={activeTab}
           onChange={setActiveTab}
           planCount={todayPlan.length}
           savedCount={saved.length}
         />
+        <SortDropdown value={sortBy} onChange={setSortBy} />
       </div>
 
       {/* List or Empty */}
-      {currentList.length === 0 ? (
+      {sortedList.length === 0 ? (
         <EmptyState />
       ) : (
         <div className="flex flex-col gap-3">
-          {currentList.map((workout) => (
+          {sortedList.map((workout) => (
             <PlanCard key={workout.id} workout={workout} tab={activeTab} />
           ))}
         </div>
