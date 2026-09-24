@@ -1,34 +1,29 @@
-import { getAllWorkouts } from "@/lib/api";
-import WorkoutCard from "@/components/shared/WorkoutCard";
-import type { Workout } from "@/types/workout";
+import { Suspense } from "react";
+import WorkoutList from "@/components/home/WorkoutList";
 
-export default async function HomePage() {
-  let workouts: Workout[] = [];
-  let error: string | null = null;
-
-  try {
-    workouts = await getAllWorkouts();
-  } catch (err) {
-    error = err instanceof Error ? err.message : "Unknown error";
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-10">
-        <p className="text-red-400">⚠️ {error}</p>
-      </div>
-    );
-  }
-
+export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-10">
-      <h1 className="mb-6 font-display text-3xl font-black uppercase text-white">
-        Card Test ✅
-      </h1>
-
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <WorkoutCard workout={workouts[0]} />
+      {/* Section Header */}
+      <div className="mb-8">
+        <h2 className="font-display text-3xl font-black uppercase tracking-wide text-white sm:text-4xl">
+          The Library
+        </h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Twelve lifts covering every major muscle group.
+        </p>
       </div>
+
+      {/* Library Grid */}
+      <Suspense
+        fallback={
+          <div className="rounded-2xl border border-border bg-card p-8 text-center text-gray-500">
+            Loading workouts…
+          </div>
+        }
+      >
+        <WorkoutList />
+      </Suspense>
     </div>
   );
 }
