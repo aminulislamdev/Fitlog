@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Oswald, Inter } from "next/font/google";
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
+import { PlanProvider } from "@/context/PlanContext";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -28,8 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${oswald.variable} ${inter.variable}`}>
-        {children}
-        <ToastContainer />
+        <PlanProvider>{children}</PlanProvider>
       </body>
     </html>
   );
