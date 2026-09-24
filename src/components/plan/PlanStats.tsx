@@ -1,13 +1,21 @@
 "use client";
 
 import { usePlan } from "@/context/PlanContext";
+import type { PlanTab } from "@/types/plan";
 
-const PlanStats = () => {
-  const { todayPlan } = usePlan();
+interface PlanStatsProps {
+  activeTab: PlanTab;
+}
 
-  const exercises = todayPlan.length;
-  const minutes = todayPlan.reduce((sum, w) => sum + w.duration, 0);
-  const calories = todayPlan.reduce((sum, w) => sum + w.caloriesBurned, 0);
+const PlanStats = ({ activeTab }: PlanStatsProps) => {
+  const { todayPlan, saved } = usePlan();
+
+  // Pick the list based on active tab
+  const list = activeTab === "today" ? todayPlan : saved;
+
+  const exercises = list.length;
+  const minutes = list.reduce((sum, w) => sum + w.duration, 0);
+  const calories = list.reduce((sum, w) => sum + w.caloriesBurned, 0);
 
   const stats = [
     { label: "Exercises", value: exercises },

@@ -54,9 +54,9 @@ export default function MyPlanPage() {
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Stats — dynamic based on activeTab */}
       <div className="mb-6">
-        <PlanStats />
+        <PlanStats activeTab={activeTab} />
       </div>
 
       {/* Tabs + Sort */}
