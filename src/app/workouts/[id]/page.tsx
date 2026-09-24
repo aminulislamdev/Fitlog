@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FiArrowLeft, FiClock, FiZap, FiStar } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 import { getWorkoutById } from "@/lib/api";
 import WorkoutActions from "@/components/shared/WorkoutActions";
 
@@ -28,7 +28,7 @@ export default async function WorkoutDetailPage({ params }: PageProps) {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 lg:py-12">
+    <div className="container mx-auto px-4 py-6 lg:py-10">
       {/* Back link */}
       <Link
         href="/"
@@ -39,26 +39,26 @@ export default async function WorkoutDetailPage({ params }: PageProps) {
       </Link>
 
       {/* Two-column layout */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-        {/* Left — Image */}
-        <div className="order-1">
-          <div className="overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+        {/* Left — Image (sticky on desktop) */}
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="aspect-square overflow-hidden rounded-2xl border border-border bg-card">
             <Image
               src={workout.image}
               alt={workout.name}
               width={800}
               height={800}
-              className="h-auto w-full object-cover"
+              className="h-full w-full object-cover"
               priority
             />
           </div>
         </div>
 
         {/* Right — Content */}
-        <div className="order-2 flex flex-col gap-6">
-          {/* Title */}
+        <div className="flex flex-col gap-5">
+          {/* Title + Description */}
           <div>
-            <h1 className="font-display text-3xl font-black uppercase leading-tight text-white sm:text-4xl">
+            <h1 className="font-display text-2xl font-black uppercase leading-tight text-white sm:text-3xl lg:text-4xl">
               {workout.name}
             </h1>
             <p className="mt-3 text-sm text-gray-400 sm:text-base">
@@ -71,71 +71,54 @@ export default async function WorkoutDetailPage({ params }: PageProps) {
             {workout.muscleGroups.map((muscle) => (
               <span
                 key={muscle}
-                className="rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-black"
+                className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold text-black"
               >
                 {muscle}
               </span>
             ))}
           </div>
 
-          {/* Quick stats row (mobile view) */}
-          <div className="flex items-center gap-5 border-y border-border py-3 text-xs text-gray-400">
-            <div className="flex items-center gap-1.5">
-              <FiClock size={14} />
-              <span>{workout.duration} min</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <FiZap size={14} />
-              <span>{workout.caloriesBurned} kcal</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <FiStar size={14} />
-              <span>{workout.rating}</span>
-            </div>
-          </div>
-
-          {/* Specs table */}
-          <div className="overflow-hidden rounded-2xl border border-border bg-card">
-            <div className="border-b border-border px-4 py-3">
-              <h2 className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                Specs
-              </h2>
-            </div>
+          {/* Specs panel */}
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
             <div className="divide-y divide-border">
               {specs.map((spec) => (
                 <div
                   key={spec.label}
-                  className="flex items-center justify-between px-4 py-3 text-sm"
+                  className="flex items-center justify-between gap-4 px-5 py-3.5"
                 >
-                  <span className="text-gray-500">{spec.label}</span>
-                  <span className="font-semibold text-white">{spec.value}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                    {spec.label}
+                  </span>
+                  <span className="text-right text-xs font-semibold text-white sm:text-[13px]">
+                    {spec.value}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Actions */}
-          <WorkoutActions workout={workout} />
-
           {/* Instructions */}
           <div>
-            <h2 className="mb-4 font-display text-lg font-bold uppercase tracking-wide text-white">
+            <h2 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-white">
               Instructions
             </h2>
-            <ol className="space-y-3">
+            <ol className="space-y-2.5">
               {workout.instructions.map((step, i) => (
                 <li
                   key={i}
-                  className="flex gap-3 rounded-xl border border-border bg-card p-4 text-sm text-gray-300"
+                  className="flex gap-2 text-sm leading-relaxed text-gray-400"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-black">
-                    {i + 1}
+                  <span className="font-semibold text-gray-500">
+                    {i + 1}.
                   </span>
                   <span>{step}</span>
                 </li>
               ))}
             </ol>
           </div>
+
+          {/* Actions */}
+          <WorkoutActions workout={workout} />
         </div>
       </div>
     </div>
