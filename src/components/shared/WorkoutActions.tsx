@@ -1,6 +1,6 @@
 "use client";
 
-import { FiPlusCircle, FiBookmark, FiCheck } from "react-icons/fi";
+import { FiPlus, FiBookmark, FiCheck } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { usePlan } from "@/context/PlanContext";
 import type { Workout } from "@/types/workout";
@@ -41,7 +41,7 @@ const WorkoutActions = ({ workout }: WorkoutActionsProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
+    <div className="flex flex-row flex-wrap items-center justify-end gap-3">
       {/* Primary — Add to plan */}
       <button
         type="button"
@@ -49,21 +49,23 @@ const WorkoutActions = ({ workout }: WorkoutActionsProps) => {
         disabled={inPlan || planFull}
         className={
           inPlan
-            ? "inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-accent/20 px-6 py-3 text-xs font-bold uppercase tracking-wider text-accent"
+            ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent/20 px-5 py-3 text-xs font-bold uppercase tracking-wide text-accent"
             : planFull
-              ? "inline-flex flex-1 cursor-not-allowed items-center justify-center gap-2 rounded-full bg-card px-6 py-3 text-xs font-bold uppercase tracking-wider text-gray-500"
-              : "inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-xs font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
+              ? "inline-flex cursor-not-allowed items-center justify-center gap-2 whitespace-nowrap rounded-full bg-card px-5 py-3 text-xs font-bold uppercase tracking-wide text-gray-500"
+              : "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent px-5 py-3 text-xs font-bold uppercase tracking-wide text-black transition hover:bg-accent/90"
         }
       >
         {inPlan ? (
           <>
-            <FiCheck size={16} />
+            <FiCheck size={15} />
             In Today&apos;s Plan
           </>
+        ) : planFull ? (
+          "Plan Full"
         ) : (
           <>
-            <FiPlusCircle size={16} />
-            {planFull ? "Plan Full" : "Add to Today's Plan"}
+            <FiPlus size={15} />
+            Add to today&apos;s plan
           </>
         )}
       </button>
@@ -75,19 +77,19 @@ const WorkoutActions = ({ workout }: WorkoutActionsProps) => {
         disabled={inSaved}
         className={
           inSaved
-            ? "inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent/40 bg-accent/5 px-6 py-3 text-xs font-bold uppercase tracking-wider text-accent"
-            : "inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-6 py-3 text-xs font-bold uppercase tracking-wider text-gray-300 transition hover:border-accent hover:text-accent"
+            ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-accent/40 bg-accent/5 px-5 py-3 text-xs font-bold uppercase tracking-wide text-accent"
+            : "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-border bg-transparent px-5 py-3 text-xs font-bold uppercase tracking-wide text-gray-300 transition hover:border-accent hover:text-accent"
         }
       >
         {inSaved ? (
           <>
-            <FiCheck size={16} />
+            <FiCheck size={15} />
             Saved
           </>
         ) : (
           <>
-            <FiBookmark size={16} />
-            Save for Later
+            <FiBookmark size={15} />
+            Save for later
           </>
         )}
       </button>
