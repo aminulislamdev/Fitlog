@@ -1,6 +1,6 @@
 "use client";
 
-import { FiPlus, FiBookmark, FiCheck } from "react-icons/fi";
+import { FiPlus, FiBookmark, FiCheck, FiAlertCircle } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { usePlan } from "@/context/PlanContext";
 import type { Workout } from "@/types/workout";
@@ -19,39 +19,49 @@ const WorkoutActions = ({ workout }: WorkoutActionsProps) => {
   const planFull = todayPlan.length >= MAX_PLAN;
 
   const handleAddToPlan = () => {
+    // Already in plan
     if (inPlan) {
-      toast.info("Already in today's plan");
+      toast.warning("Already in today's plan", {
+        icon: <FiAlertCircle />,
+      });
       return;
     }
+    // Plan full
     if (planFull) {
-      toast.warning("Today's plan is full (max 5 lifts)");
+      toast.error(`Today's plan is full (max ${MAX_PLAN} lifts)`, {
+        icon: <FiAlertCircle />,
+      });
       return;
     }
+    // Success
     addToPlan(workout);
     toast.success("Added to today's plan");
   };
 
   const handleSave = () => {
+    // Already saved
     if (inSaved) {
-      toast.info("Already saved");
+      toast.warning("Already saved for later", {
+        icon: <FiAlertCircle />,
+      });
       return;
     }
+    // Success
     addToSaved(workout);
     toast.success("Saved for later");
   };
 
   return (
     <div className="flex flex-row flex-wrap items-center justify-end gap-3">
-      {/* Primary — Add to plan */}
+      {/* Primary — Add to Plan */}
       <button
         type="button"
         onClick={handleAddToPlan}
-        disabled={inPlan || planFull}
         className={
           inPlan
-            ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent/20 px-5 py-3 text-xs font-bold uppercase tracking-wide text-accent"
+            ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent/20 px-5 py-3 text-xs font-bold uppercase tracking-wide text-accent transition hover:bg-accent/30"
             : planFull
-              ? "inline-flex cursor-not-allowed items-center justify-center gap-2 whitespace-nowrap rounded-full bg-card px-5 py-3 text-xs font-bold uppercase tracking-wide text-gray-500"
+              ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-card px-5 py-3 text-xs font-bold uppercase tracking-wide text-gray-500 transition hover:bg-card/70"
               : "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-accent px-5 py-3 text-xs font-bold uppercase tracking-wide text-black transition hover:bg-accent/90"
         }
       >
@@ -61,7 +71,10 @@ const WorkoutActions = ({ workout }: WorkoutActionsProps) => {
             In Today&apos;s Plan
           </>
         ) : planFull ? (
-          "Plan Full"
+          <>
+            <FiAlertCircle size={15} />
+            Plan Full
+          </>
         ) : (
           <>
             <FiPlus size={15} />
@@ -74,10 +87,9 @@ const WorkoutActions = ({ workout }: WorkoutActionsProps) => {
       <button
         type="button"
         onClick={handleSave}
-        disabled={inSaved}
         className={
           inSaved
-            ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-accent/40 bg-accent/5 px-5 py-3 text-xs font-bold uppercase tracking-wide text-accent"
+            ? "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-accent/40 bg-accent/5 px-5 py-3 text-xs font-bold uppercase tracking-wide text-accent transition hover:bg-accent/10"
             : "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-border bg-transparent px-5 py-3 text-xs font-bold uppercase tracking-wide text-gray-300 transition hover:border-accent hover:text-accent"
         }
       >
