@@ -12,8 +12,8 @@ import type { Workout } from "@/types/workout";
 interface PlanContextValue {
   todayPlan: Workout[];
   saved: Workout[];
-  addToPlan: (workout: Workout) => void;
-  addToSaved: (workout: Workout) => void;
+  addToPlan: (workout: Workout) => boolean;
+  addToSaved: (workout: Workout) => boolean;
   removeFromPlan: (id: number) => void;
   removeFromSaved: (id: number) => void;
   isInPlan: (id: number) => boolean;
@@ -27,57 +27,55 @@ const PLAN_KEY = "fitlog:plan";
 const SAVED_KEY = "fitlog:saved";
 const MAX_PLAN = 5;
 
+/** Safe read from localStorage */
+function readFromStorage(key: string): Workout[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as Workout[]) : [];
+  } catch {
+    return [];
+  }
+}
+
 export function PlanProvider({ children }: { children: ReactNode }) {
-  const [todayPlan, setTodayPlan] = useState<Workout[]>([]);
-  const [saved, setSaved] = useState<Workout[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  // Lazy initializer — runs once on client (SSR gets [])
+  const [todayPlan, setTodayPlan] = useState<Workout[]>(() =>
+    readFromStorage(PLAN_KEY)
+  );
+  const [saved, setSaved] = useState<Workout[]>(() =>
+    readFromStorage(SAVED_KEY)
+  );
 
-  // Load from localStorage when app mounts
+  // Persist plan
   useEffect(() => {
-    try {
-      const planRaw = localStorage.getItem(PLAN_KEY);
-      const savedRaw = localStorage.getItem(SAVED_KEY);
-      if (planRaw) setTodayPlan(JSON.parse(planRaw));
-      if (savedRaw) setSaved(JSON.parse(savedRaw));
-    } catch (err) {
-      console.error("Failed to load from localStorage:", err);
-    }
-    setHydrated(true);
-  }, []);
-
-  // Save plan to localStorage
-  useEffect(() => {
-    if (!hydrated) return;
     try {
       localStorage.setItem(PLAN_KEY, JSON.stringify(todayPlan));
     } catch (err) {
       console.error("Failed to save plan:", err);
     }
-  }, [todayPlan, hydrated]);
+  }, [todayPlan]);
 
-  // Save saved list to localStorage
+  // Persist saved
   useEffect(() => {
-    if (!hydrated) return;
     try {
       localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
     } catch (err) {
       console.error("Failed to save saved list:", err);
     }
-  }, [saved, hydrated]);
+  }, [saved]);
 
-  const addToPlan = (workout: Workout) => {
-    setTodayPlan((prev) => {
-      if (prev.find((w) => w.id === workout.id)) return prev;
-      if (prev.length >= MAX_PLAN) return prev;
-      return [...prev, workout];
-    });
+  const addToPlan = (workout: Workout): boolean => {
+    if (todayPlan.some((w) => w.id === workout.id)) return false;
+    if (todayPlan.length >= MAX_PLAN) return false;
+    setTodayPlan((prev) => [...prev, workout]);
+    return true;
   };
 
-  const addToSaved = (workout: Workout) => {
-    setSaved((prev) => {
-      if (prev.find((w) => w.id === workout.id)) return prev;
-      return [...prev, workout];
-    });
+  const addToSaved = (workout: Workout): boolean => {
+    if (saved.some((w) => w.id === workout.id)) return false;
+    setSaved((prev) => [...prev, workout]);
+    return true;
   };
 
   const removeFromPlan = (id: number) => {
@@ -90,6 +88,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
 
   const isInPlan = (id: number) => todayPlan.some((w) => w.id === id);
   const isInSaved = (id: number) => saved.some((w) => w.id === id);
+
   const clearPlan = () => setTodayPlan([]);
 
   return (
@@ -113,8 +112,6 @@ export function PlanProvider({ children }: { children: ReactNode }) {
 
 export function usePlan() {
   const ctx = useContext(PlanContext);
-  if (!ctx) {
-    throw new Error("usePlan must be used inside PlanProvider");
-  }
+  if (!ctx) throw new Error("usePlan must be used inside PlanProvider");
   return ctx;
 }
