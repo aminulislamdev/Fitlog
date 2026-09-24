@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-black uppercase text-accent">
-        Context Ready ✅
+        Navbar + Footer Ready ✅
       </h1>
       <p className="mt-2 text-gray-400">
         Plan: {todayPlan.length} items | Saved: {saved.length} items
