@@ -43,21 +43,26 @@ const PlanCard = ({ workout, tab }: PlanCardProps) => {
   };
 
   const handleMarkDone = () => {
-    // Remove from plan + success toast
     removeFromPlan(workout.id);
     toast.success(`"${workout.name}" done! 💪 Great work.`);
   };
 
   const handleMoveToPlan = () => {
+    // Already in plan
     if (inPlan) {
       toast.info("Already in today's plan");
       return;
     }
+
+    // Plan is full
     if (planFull) {
       toast.warning("Today's plan is full (max 5 lifts)");
       return;
     }
+
+    // Move: add to plan + remove from saved
     addToPlan(workout);
+    removeFromSaved(workout.id);
     toast.success("Moved to today's plan");
   };
 
@@ -114,15 +119,17 @@ const PlanCard = ({ workout, tab }: PlanCardProps) => {
           <button
             type="button"
             onClick={handleMoveToPlan}
-            disabled={inPlan || planFull}
+            disabled={planFull && !inPlan}
             className={
               inPlan
                 ? "inline-flex cursor-not-allowed items-center gap-1.5 rounded-full bg-accent/20 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-accent"
-                : "inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
+                : planFull
+                  ? "inline-flex cursor-not-allowed items-center gap-1.5 rounded-full bg-card px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-500"
+                  : "inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
             }
           >
             <FiCheckCircle size={12} />
-            {inPlan ? "In Plan" : "Move to Plan"}
+            {inPlan ? "In Plan" : planFull ? "Plan Full" : "Move to Plan"}
           </button>
         ) : (
           <button
