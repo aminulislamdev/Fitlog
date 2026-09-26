@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiClock, FiZap, FiStar, FiEye, FiCheckCircle, FiX } from "react-icons/fi";
+import {
+  FiClock,
+  FiZap,
+  FiStar,
+  FiEye,
+  FiCheckCircle,
+  FiX,
+} from "react-icons/fi";
 import { toast } from "react-toastify";
 import { usePlan } from "@/context/PlanContext";
 import type { Workout } from "@/types/workout";
@@ -14,8 +21,13 @@ interface PlanCardProps {
 }
 
 const PlanCard = ({ workout, tab }: PlanCardProps) => {
-  const { removeFromPlan, removeFromSaved, addToPlan, isInPlan, todayPlan } =
-    usePlan();
+  const {
+    removeFromPlan,
+    removeFromSaved,
+    addToPlan,
+    isInPlan,
+    todayPlan,
+  } = usePlan();
 
   const inPlan = isInPlan(workout.id);
   const planFull = todayPlan.length >= 5;
@@ -31,7 +43,9 @@ const PlanCard = ({ workout, tab }: PlanCardProps) => {
   };
 
   const handleMarkDone = () => {
-    toast.success(`"${workout.name}" marked as done 💪`);
+    // Remove from plan + success toast
+    removeFromPlan(workout.id);
+    toast.success(`"${workout.name}" done! 💪 Great work.`);
   };
 
   const handleMoveToPlan = () => {
@@ -104,7 +118,7 @@ const PlanCard = ({ workout, tab }: PlanCardProps) => {
             className={
               inPlan
                 ? "inline-flex cursor-not-allowed items-center gap-1.5 rounded-full bg-accent/20 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-accent"
-                : "inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
+                : "inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
             }
           >
             <FiCheckCircle size={12} />
@@ -114,7 +128,7 @@ const PlanCard = ({ workout, tab }: PlanCardProps) => {
           <button
             type="button"
             onClick={handleMarkDone}
-            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-black transition hover:bg-accent/90"
           >
             <FiCheckCircle size={12} />
             Mark as Done
